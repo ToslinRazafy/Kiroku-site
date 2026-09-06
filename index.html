@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kiroku 記録 — Your personal anime &amp; manga library</title>
+<meta name="description" content="Kiroku is a personal local app for tracking your anime, manga and manhwa library — organize what you're watching, reading, and what's next." />
+
+<!-- Fonts: Sora for display/headings, Inter for body, Noto Sans JP for kanji -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;500;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind (CDN, no build step) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          void: '#0a0a0f',
+          ink: '#111219',
+          surface: '#161822',
+          indigo: { DEFAULT: '#7c83fd', dim: '#5b61c4' },
+          sakura: { DEFAULT: '#ff8fb3', dim: '#c96b8a' },
+          paper: '#f4f2ee',
+        },
+        fontFamily: {
+          display: ['Sora', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          jp: ['"Noto Sans JP"', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+
+<!-- Lucide icons (CDN) -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-void text-paper font-body antialiased">
+
+  <!-- Fixed 3D scene: sits behind every section, driven by scroll -->
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <!-- Static fallback shown only if WebGL is unavailable -->
+  <div id="no-webgl-fallback" class="fixed inset-0 -z-10 hidden"></div>
+
+  <!-- Nav -->
+  <header id="site-nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500">
+    <nav class="max-w-6xl mx-auto flex items-center justify-between px-6 md:px-10 py-5">
+      <a href="#hero" class="flex items-baseline gap-2 group">
+        <span class="font-display text-lg tracking-wide">Kiroku</span>
+        <span class="font-jp text-sm text-paper/50 group-hover:text-sakura transition-colors">記録</span>
+      </a>
+      <div class="hidden md:flex items-center gap-9 text-sm text-paper/70">
+        <a href="#hero" class="hover:text-paper transition-colors">Home</a>
+        <a href="#features" class="hover:text-paper transition-colors">Features</a>
+        <a href="#preview" class="hover:text-paper transition-colors">Preview</a>
+        <a href="#download" class="hover:text-paper transition-colors">Download</a>
+      </div>
+      <a href="#download" class="text-sm px-4 py-2 rounded-full border border-paper/20 hover:border-sakura/60 hover:text-sakura transition-colors">
+        Get Kiroku
+      </a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- 1. HERO -->
+    <section id="hero" class="scene-section relative min-h-[100svh] flex items-center">
+      <div class="max-w-6xl w-full mx-auto px-6 md:px-10">
+        <p class="reveal font-jp text-sakura/80 text-sm tracking-[0.2em] mb-6">記録 — kiroku, "a record"</p>
+        <h1 class="reveal font-display font-semibold leading-[0.95] text-[13vw] md:text-[6.5rem] tracking-tight">
+          Kiroku
+        </h1>
+        <p class="reveal font-display text-xl md:text-3xl text-paper/85 mt-4 max-w-xl">
+          Your personal anime &amp; manga library.
+        </p>
+        <p class="reveal text-paper/55 mt-5 max-w-md leading-relaxed">
+          Organize your anime, manga and manhwa collection in one personal library — everything you watch and read, kept in one place.
+        </p>
+        <div class="reveal flex flex-wrap items-center gap-4 mt-10">
+          <a href="#download" id="hero-download"
+             class="px-6 py-3.5 rounded-full bg-paper text-void font-medium text-sm hover:bg-sakura transition-colors">
+            Download APK
+          </a>
+          <a href="#about" class="px-6 py-3.5 rounded-full border border-paper/25 text-sm hover:border-paper/60 transition-colors">
+            Discover Kiroku
+          </a>
+        </div>
+      </div>
+      <div class="absolute bottom-8 inset-x-0 flex justify-center text-paper/30 text-xs tracking-widest">
+        <span class="scroll-cue">scroll</span>
+      </div>
+    </section>
+
+    <!-- 2. ABOUT -->
+    <section id="about" class="scene-section relative min-h-[100svh] flex items-center">
+      <div class="max-w-6xl w-full mx-auto px-6 md:px-10">
+        <div class="max-w-lg">
+          <p class="reveal text-paper/45 text-sm mb-4">A space of your own</p>
+          <h2 class="reveal font-display text-3xl md:text-5xl font-medium leading-tight">
+            Kiroku is your personal space to keep track of the stories you love.
+          </h2>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4 mt-16">
+          <article class="reveal glass-card p-6 rounded-2xl">
+            <p class="font-jp text-sakura/70 text-xs mb-3">アニメ</p>
+            <h3 class="font-display text-lg mb-2">Anime</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Track the anime you're watching, finished or planning to watch.</p>
+          </article>
+          <article class="reveal glass-card p-6 rounded-2xl" style="--delay:120ms">
+            <p class="font-jp text-sakura/70 text-xs mb-3">漫画</p>
+            <h3 class="font-display text-lg mb-2">Manga</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Keep your manga collection organized and know exactly where you are.</p>
+          </article>
+          <article class="reveal glass-card p-6 rounded-2xl" style="--delay:240ms">
+            <p class="font-jp text-sakura/70 text-xs mb-3">漫畵</p>
+            <h3 class="font-display text-lg mb-2">Manhwa</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Manage your favorite manhwa and discover what you still have to read.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. FEATURES -->
+    <section id="features" class="scene-section relative min-h-[100svh] flex items-center">
+      <div class="max-w-6xl w-full mx-auto px-6 md:px-10">
+        <p class="reveal text-paper/45 text-sm mb-4">What Kiroku does</p>
+        <h2 class="reveal font-display text-3xl md:text-4xl font-medium mb-14 max-w-lg">
+          Everything you need to run your own library.
+        </h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="reveal glass-card p-6 rounded-2xl">
+            <i data-lucide="clapperboard" class="text-indigo w-5 h-5 mb-4"></i>
+            <h3 class="font-display text-base mb-1.5">Anime tracking</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Organize anime by status, seasons and episodes.</p>
+          </div>
+          <div class="reveal glass-card p-6 rounded-2xl" style="--delay:80ms">
+            <i data-lucide="book-open" class="text-indigo w-5 h-5 mb-4"></i>
+            <h3 class="font-display text-base mb-1.5">Manga tracking</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Keep track of manga you've finished, are currently reading or want to read.</p>
+          </div>
+          <div class="reveal glass-card p-6 rounded-2xl" style="--delay:160ms">
+            <i data-lucide="library" class="text-indigo w-5 h-5 mb-4"></i>
+            <h3 class="font-display text-base mb-1.5">Manhwa tracking</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Manage your manhwa library with the same simple organization.</p>
+          </div>
+          <div class="reveal glass-card p-6 rounded-2xl" style="--delay:80ms">
+            <i data-lucide="layout-grid" class="text-sakura w-5 h-5 mb-4"></i>
+            <h3 class="font-display text-base mb-1.5">Personal library</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Everything in one place, organized your way.</p>
+          </div>
+          <div class="reveal glass-card p-6 rounded-2xl" style="--delay:160ms">
+            <i data-lucide="shield-check" class="text-sakura w-5 h-5 mb-4"></i>
+            <h3 class="font-display text-base mb-1.5">Local &amp; private</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Your library is stored locally on your device.</p>
+          </div>
+          <div class="reveal glass-card p-6 rounded-2xl" style="--delay:240ms">
+            <i data-lucide="line-chart" class="text-sakura w-5 h-5 mb-4"></i>
+            <h3 class="font-display text-base mb-1.5">Progress tracking</h3>
+            <p class="text-paper/55 text-sm leading-relaxed">Know exactly where you stopped.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. APP PREVIEW -->
+    <section id="preview" class="scene-section relative min-h-[100svh] flex items-center overflow-hidden">
+      <div class="max-w-6xl w-full mx-auto px-6 md:px-10">
+        <p class="reveal text-paper/45 text-sm mb-4">Inside the app</p>
+        <h2 class="reveal font-display text-3xl md:text-4xl font-medium mb-14 max-w-lg">
+          A library that feels like yours.
+        </h2>
+        <div class="relative h-[420px] md:h-[480px]" id="phone-stage">
+          <div class="phone-card reveal" data-depth="1" style="--x:-16%; --rot:-8deg; --z:0px;">
+            <div class="phone-shell">
+              <div class="phone-notch"></div>
+              <div class="phone-screen home-screen"></div>
+            </div>
+            <p class="text-paper/45 text-xs text-center mt-4">Home</p>
+          </div>
+          <div class="phone-card reveal" data-depth="2" style="--x:0%; --rot:0deg; --z:40px;">
+            <div class="phone-shell">
+              <div class="phone-notch"></div>
+              <div class="phone-screen library-screen"></div>
+            </div>
+            <p class="text-paper/45 text-xs text-center mt-4">Library</p>
+          </div>
+          <div class="phone-card reveal" data-depth="1" style="--x:16%; --rot:8deg; --z:0px;">
+            <div class="phone-shell">
+              <div class="phone-notch"></div>
+              <div class="phone-screen detail-screen"></div>
+            </div>
+            <p class="text-paper/45 text-xs text-center mt-4">Details</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. HOW IT WORKS -->
+    <section id="how" class="scene-section relative min-h-[100svh] flex items-center">
+      <div class="max-w-6xl w-full mx-auto px-6 md:px-10">
+        <p class="reveal text-paper/45 text-sm mb-4">How it works</p>
+        <h2 class="reveal font-display text-3xl md:text-4xl font-medium mb-14 max-w-lg">
+          Four steps, then it just runs.
+        </h2>
+        <div class="relative">
+          <div class="hidden md:block absolute top-5 left-0 right-0 h-px bg-paper/10"></div>
+          <div class="grid md:grid-cols-4 gap-8">
+            <div class="reveal">
+              <div class="step-dot"></div>
+              <h3 class="font-display text-base mt-5 mb-1.5">Add</h3>
+              <p class="text-paper/55 text-sm leading-relaxed">Add the titles you're watching or reading.</p>
+            </div>
+            <div class="reveal" style="--delay:100ms">
+              <div class="step-dot"></div>
+              <h3 class="font-display text-base mt-5 mb-1.5">Organize</h3>
+              <p class="text-paper/55 text-sm leading-relaxed">Sort by status — in progress, finished, planned, on hold.</p>
+            </div>
+            <div class="reveal" style="--delay:200ms">
+              <div class="step-dot"></div>
+              <h3 class="font-display text-base mt-5 mb-1.5">Track</h3>
+              <p class="text-paper/55 text-sm leading-relaxed">Follow your progress episode by episode, chapter by chapter.</p>
+            </div>
+            <div class="reveal" style="--delay:300ms">
+              <div class="step-dot"></div>
+              <h3 class="font-display text-base mt-5 mb-1.5">Enjoy</h3>
+              <p class="text-paper/55 text-sm leading-relaxed">Find your whole library again in one glance, anytime.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DOWNLOAD -->
+    <section id="download" class="scene-section relative min-h-[100svh] flex items-center">
+      <div class="max-w-6xl w-full mx-auto px-6 md:px-10 text-center">
+        <h2 class="reveal font-display text-4xl md:text-6xl font-semibold leading-tight">
+          Take your library<br class="hidden md:block" /> with you.
+        </h2>
+        <p class="reveal text-paper/55 mt-6 max-w-md mx-auto">
+          Keep track of your anime, manga and manhwa wherever you go.
+        </p>
+        <div class="reveal mt-10 flex flex-col items-center gap-4">
+          <a href="assets/apk/kiroku.apk" download
+             class="px-8 py-4 rounded-full bg-paper text-void font-medium hover:bg-sakura transition-colors inline-flex items-center gap-2.5">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            Download Kiroku APK
+          </a>
+          <div class="flex items-center gap-2 text-paper/40 text-xs">
+            <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+            <span>Android</span>
+            <span class="mx-1">·</span>
+            <span>APK — local application</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative border-t border-paper/10">
+    <div class="max-w-6xl mx-auto px-6 md:px-10 py-14 flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div>
+        <div class="flex items-baseline gap-2">
+          <span class="font-display text-lg">Kiroku</span>
+          <span class="font-jp text-sm text-paper/45">記録</span>
+        </div>
+        <p class="text-paper/45 text-sm mt-2">Your personal anime &amp; manga library.</p>
+      </div>
+      <div class="flex gap-8 text-sm text-paper/55">
+        <a href="#hero" class="hover:text-paper transition-colors">Home</a>
+        <a href="#features" class="hover:text-paper transition-colors">Features</a>
+        <a href="#download" class="hover:text-paper transition-colors">Download</a>
+        <a href="#about" class="hover:text-paper transition-colors">About</a>
+      </div>
+    </div>
+    <div class="max-w-6xl mx-auto px-6 md:px-10 pb-8 text-paper/30 text-xs">
+      © 2026 Kiroku. All rights reserved.
+    </div>
+  </footer>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+  <script type="module" src="script.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

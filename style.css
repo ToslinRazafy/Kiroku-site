@@ -1,0 +1,194 @@
+/* ---------------------------------------------------------------
+   Kiroku — base + effects layered on top of Tailwind utilities.
+   ------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Fixed WebGL canvas sits behind all content; sections scroll over it. */
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -20;
+  display: block;
+  background: radial-gradient(ellipse at 50% 30%, #14151f 0%, #0a0a0f 65%);
+}
+
+#no-webgl-fallback {
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(124, 131, 253, 0.18), transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(255, 143, 179, 0.12), transparent 55%),
+    #0a0a0f;
+}
+
+/* A soft vignette + grain-like gradient over the whole page so text
+   stays readable regardless of what the globe is doing underneath. */
+main::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(10,10,15,0.15) 0%, rgba(10,10,15,0.55) 55%, rgba(10,10,15,0.92) 100%);
+}
+
+/* --- Navbar --- */
+#site-nav {
+  background: transparent;
+  border-bottom: 1px solid transparent;
+}
+#site-nav.scrolled {
+  background: rgba(10, 10, 15, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(244, 242, 238, 0.08);
+}
+
+/* --- Glassmorphism cards --- */
+.glass-card {
+  background: linear-gradient(155deg, rgba(244,242,238,0.06), rgba(244,242,238,0.02));
+  border: 1px solid rgba(244, 242, 238, 0.09);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 400ms ease, transform 400ms ease;
+}
+.glass-card:hover {
+  border-color: rgba(255, 143, 179, 0.35);
+  transform: translateY(-2px);
+}
+
+/* --- Scroll-reveal: one calm fade+rise, staggered by --delay --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Scroll cue on hero --- */
+.scroll-cue {
+  position: relative;
+  padding-bottom: 18px;
+}
+.scroll-cue::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  height: 14px;
+  background: rgba(244, 242, 238, 0.4);
+  transform: translateX(-50%);
+  animation: scrollCue 1.8s ease-in-out infinite;
+}
+@keyframes scrollCue {
+  0%   { transform: translate(-50%, -4px); opacity: 0; }
+  40%  { opacity: 1; }
+  100% { transform: translate(-50%, 10px); opacity: 0; }
+}
+
+/* --- Step markers (How it works) --- */
+.step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ff8fb3;
+  box-shadow: 0 0 0 4px rgba(255, 143, 179, 0.15), 0 0 18px rgba(255, 143, 179, 0.5);
+}
+
+/* --- Phone mockups (App preview) — CSS 3D, floating in the scene --- */
+#phone-stage {
+  perspective: 1400px;
+}
+.phone-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  transform: translate(-50%, -50%) translate(var(--x), 0) translateZ(var(--z)) rotateY(var(--rot));
+  transform-style: preserve-3d;
+  animation: floatPhone 6s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+.phone-card:nth-child(2) { animation-duration: 7s; }
+.phone-card:nth-child(3) { animation-duration: 6.5s; }
+
+@keyframes floatPhone {
+  0%, 100% { margin-top: 0px; }
+  50% { margin-top: -14px; }
+}
+
+.phone-shell {
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  border-radius: 28px;
+  background: #111219;
+  border: 1px solid rgba(244, 242, 238, 0.14);
+  box-shadow:
+    0 30px 60px -20px rgba(0,0,0,0.6),
+    0 0 40px -10px rgba(124, 131, 253, 0.25);
+  padding: 8px;
+  position: relative;
+}
+.phone-notch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 16px;
+  background: #111219;
+  border-radius: 0 0 12px 12px;
+  z-index: 2;
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+.home-screen {
+  background:
+    linear-gradient(160deg, rgba(124,131,253,0.35), rgba(10,10,15,0.9) 55%),
+    repeating-linear-gradient(90deg, rgba(244,242,238,0.05) 0 1px, transparent 1px 34px);
+}
+.library-screen {
+  background:
+    linear-gradient(160deg, rgba(255,143,179,0.3), rgba(10,10,15,0.92) 55%),
+    repeating-linear-gradient(0deg, rgba(244,242,238,0.05) 0 1px, transparent 1px 30px);
+}
+.detail-screen {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(124,131,253,0.4), transparent 60%),
+    #111219;
+}
+
+/* --- Accessibility: respect reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal {
+    transition-duration: 1ms;
+    transform: none;
+  }
+  .phone-card { animation: none; }
+  .scroll-cue::after { animation: none; }
+}
+
+/* --- Small screens: tame the phone stage & type scale a bit --- */
+@media (max-width: 640px) {
+  .phone-card { width: 130px; }
+  #phone-stage { height: 340px; }
+}
